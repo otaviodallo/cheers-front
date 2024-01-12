@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css'
 import Logo from './img/mcph.png'
 import LogoAfter from './img/after f.jpeg'
@@ -26,6 +26,7 @@ import BarDosGuri from './img/bardosgurio.jpg'
 import Cheers from './img/cheers.png'
 import cart from './img/carrinho-de-compras.png'
 import jacaré from './img/JACARE-9-FOTO-DIVULGACAO-1.webp'
+import Modal from './components/modal'
 
 const EventList = () => {
   const [events, setEvents] = useState([
@@ -59,6 +60,15 @@ const EventList = () => {
   const [searchTitle, setSearchTitle] = useState('');
   const [filterDate, setFilterDate] = useState('');
   const [filteredByDate, setFilteredByDate] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setShowModal(true);
+    }, 10000);
+    return () => clearTimeout(timeoutId);
+  }, []); 
+
 
   const formatDate = (dateString) => {
     const options = { day: 'numeric', month: 'long' };
@@ -155,6 +165,7 @@ const EventList = () => {
           ))
         )}
       </ul>
+      {showModal && <Modal />}
     </div>
   );
 };
