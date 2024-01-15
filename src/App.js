@@ -26,7 +26,6 @@ import BarDosGuri from './img/bardosgurio.jpg'
 import Cheers from './img/cheers.png'
 import cart from './img/carrinho-de-compras.png'
 import jacaré from './img/JACARE-9-FOTO-DIVULGACAO-1.webp'
-import Modal from './components/modal'
 
 const EventList = () => {
   const [events, setEvents] = useState([
@@ -60,45 +59,32 @@ const EventList = () => {
   const [searchTitle, setSearchTitle] = useState('');
   const [filterDate, setFilterDate] = useState('');
   const [filteredByDate, setFilteredByDate] = useState([]);
-  const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setShowModal(true);
-    }, 10000);
-    return () => clearTimeout(timeoutId);
-  }, []); 
+  const eventosFiltrados = events.filter((event) =>
+    event.title.toLowerCase().includes(searchTitle.toLowerCase())
+  );
 
-
-  const formatDate = (dateString) => {
+  const formatarData = (dateString) => {
     const options = { day: 'numeric', month: 'long' };
     const formattedDate = new Date(dateString).toLocaleDateString('pt-BR', options);
     return formattedDate;
   };
 
-  const filteredEvents = events.filter((event) =>
-    event.title.toLowerCase().includes(searchTitle.toLowerCase())
-  );
-
-  const formatDateForComparison = (dateString) => {
+  const DataFormatadaParaComparação = (dateString) => {
     const dateObject = new Date(dateString + 'T00:00:00');
     return dateObject;
   };
   
-  const handleFilterByDate = (date) => {
-    const formattedFilterDate = formatDateForComparison(date);
-  
-    formattedFilterDate.setDate(formattedFilterDate.getDate() + 1);
-  
-    const filteredByDate = events.filter((event) => {
-      const eventDate = formatDateForComparison(event.date);
-      return eventDate.getTime() === formattedFilterDate.getTime();
+  const handleFiltroPorData= (date) => {
+    const filtroDataFormatado = DataFormatadaParaComparação(date);
+    filtroDataFormatado.setDate(filtroDataFormatado.getDate() + 1);
+    const filtradoPorData = events.filter((event) => {
+      const eventDate = DataFormatadaParaComparação(event.date);
+      return eventDate.getTime() === filtroDataFormatado.getTime();
     });
   
-    setFilteredByDate(filteredByDate);
+    setFilteredByDate(filtradoPorData);
   };
-  
-
 
   return (
     <div className="event-list-container">
@@ -110,13 +96,13 @@ const EventList = () => {
       </div>
       <div className='main-header'>
         <h1><img src={Cheers} /></h1>
-        <ul>
-          <li><img src={cart} /></li>
+        <ul className='header-pc'>
           <li>Venda na Cheers</li>
           <li>Indique Parceiros</li>
           <li>Central de Ajuda</li>
           <li>Páginas</li>
           <li>Eventos</li>
+          <li><img src={cart} /></li>
         </ul>
       </div>
       <div className='event-filters'>
@@ -137,7 +123,7 @@ const EventList = () => {
             className='input-date'
             onChange={(e) => {
               setFilterDate(e.target.value);
-              handleFilterByDate(e.target.value);
+              handleFiltroPorData(e.target.value);
             }}
           />
         </div>
@@ -149,23 +135,22 @@ const EventList = () => {
               <img src={event.image} alt={event.title} />
               <div className='event-infos'>
                 <div className='event-info-title'>{event.title}</div>
-                <div className='event-info-date'>{formatDate(event.date)}</div>
+                <div className='event-info-date'>{formatarData(event.date)}</div>
               </div>
             </li>
           ))
         ) : (
-          filteredEvents.map((event) => (
+          eventosFiltrados.map((event) => (
             <li key={event.id} className="event-item">
               <img src={event.image} alt={event.title} />
               <div className='event-infos'>
                 <div className='event-info-title'>{event.title}</div>
-                <div className='event-info-date'>{formatDate(event.date)}</div>
+                <div className='event-info-date'>{formatarData(event.date)}</div>
               </div>
             </li>
           ))
         )}
       </ul>
-      {showModal && <Modal />}
     </div>
   );
 };
