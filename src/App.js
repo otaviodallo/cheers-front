@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './App.css'
 import Logo from './img/mcph.png'
 import LogoAfter from './img/after f.jpeg'
@@ -60,31 +60,32 @@ const EventList = () => {
   const [filterDate, setFilterDate] = useState('');
   const [filteredByDate, setFilteredByDate] = useState([]);
 
-  const eventosFiltrados = events.filter((event) =>
+  const filteredEvents = events.filter((event) =>
     event.title.toLowerCase().includes(searchTitle.toLowerCase())
   );
 
-  const formatarData = (dateString) => {
+  const formatDate = (dateString) => {
     const options = { day: 'numeric', month: 'long' };
     const formattedDate = new Date(dateString).toLocaleDateString('pt-BR', options);
     return formattedDate;
   };
 
-  const DataFormatadaParaComparação = (dateString) => {
+  const formattedDateForComparison = (dateString) => {
     const dateObject = new Date(dateString + 'T00:00:00');
     return dateObject;
   };
-  
-  const handleFiltroPorData= (date) => {
-    const filtroDataFormatado = DataFormatadaParaComparação(date);
-    filtroDataFormatado.setDate(filtroDataFormatado.getDate() + 1);
-    const filtradoPorData = events.filter((event) => {
-      const eventDate = DataFormatadaParaComparação(event.date);
-      return eventDate.getTime() === filtroDataFormatado.getTime();
+
+  const handleFilterByDate = (date) => {
+    const formattedFilterDate = formattedDateForComparison(date);
+    formattedFilterDate.setDate(formattedFilterDate.getDate() + 1);
+    const filteredByDateResult = events.filter((event) => {
+      const eventDate = formattedDateForComparison(event.date);
+      return eventDate.getTime() === formattedFilterDate.getTime();
     });
-  
-    setFilteredByDate(filtradoPorData);
+
+    setFilteredByDate(filteredByDateResult);
   };
+
 
   return (
     <div className="event-list-container">
@@ -123,7 +124,7 @@ const EventList = () => {
             className='input-date'
             onChange={(e) => {
               setFilterDate(e.target.value);
-              handleFiltroPorData(e.target.value);
+              handleFilterByDate(e.target.value);
             }}
           />
         </div>
@@ -135,17 +136,17 @@ const EventList = () => {
               <img src={event.image} alt={event.title} />
               <div className='event-infos'>
                 <div className='event-info-title'>{event.title}</div>
-                <div className='event-info-date'>{formatarData(event.date)}</div>
+                <div className='event-info-date'>{formatDate(event.date)}</div>
               </div>
             </li>
           ))
         ) : (
-          eventosFiltrados.map((event) => (
+          filteredEvents.map((event) => (
             <li key={event.id} className="event-item">
               <img src={event.image} alt={event.title} />
               <div className='event-infos'>
                 <div className='event-info-title'>{event.title}</div>
-                <div className='event-info-date'>{formatarData(event.date)}</div>
+                <div className='event-info-date'>{formatDate(event.date)}</div>
               </div>
             </li>
           ))
